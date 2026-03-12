@@ -2,6 +2,7 @@
 //  PullRates.gg — Set Data
 //  Source: ThePriceDex / TCGPlayer / community pull data
 //  Prices: TCGPlayer NM ungraded market average
+//  Resale: TCGPlayer / StockX / eBay single-pack market avg
 // ============================================================
 
 const RARITY_COLORS = {
@@ -19,13 +20,8 @@ const RARITY_LABELS = {
   C:   'Common'
 };
 
-// Each set has:
-//   rarities[]    — one entry per rarity tier (aggregate avg price, pull% per specific card)
-//   notable[]     — up to 5 named chase cards with actual prices
-//   evBreakdown[] — EV contribution per rarity per pack
 const SETS = [
 
-  // ── Ascended Heroes ────────────────────────────────────────
   {
     id: 'me2pt5',
     name: 'Ascended Heroes',
@@ -33,6 +29,7 @@ const SETS = [
     released: '2026-01-30',
     cardCount: 295,
     packEV: 7.21,
+    packResalePrice: 9.50,
     pricesUpdated: 'March 9, 2026',
     accentColor: '#7c3aed',
     topCard: { name: 'Mega Gengar ex SIR', price: 993 },
@@ -48,18 +45,17 @@ const SETS = [
       { key:'C',   pullPct:4.762,   avgPrice:0.14,  ev:0.54, count:84 },
     ],
     notable: [
-      { name:'Mega Gengar ex',           rarity:'MHR', price:993,  pullPct:0.0500 },
-      { name:'Mega Charizard Y ex',      rarity:'MHR', price:666,  pullPct:0.0500 },
-      { name:'Mega Dragonite ex',        rarity:'SIR', price:611,  pullPct:0.0499 },
-      { name:'Pikachu ex',               rarity:'SIR', price:505,  pullPct:0.0499 },
-      { name:"Team Rocket's Mewtwo ex",  rarity:'SIR', price:250,  pullPct:0.0499 },
-      { name:'Mega Dragonite ex',        rarity:'MAR', price:60,   pullPct:0.4329 },
-      { name:'Canari ex',                rarity:'UR',  price:30,   pullPct:0.4202 },
-      { name:'Psyduck',                  rarity:'IR',  price:100,  pullPct:0.3788 },
+      { name:'Mega Gengar ex',          rarity:'MHR', price:993, pullPct:0.0500 },
+      { name:'Mega Charizard Y ex',     rarity:'MHR', price:666, pullPct:0.0500 },
+      { name:'Mega Dragonite ex',       rarity:'SIR', price:611, pullPct:0.0499 },
+      { name:'Pikachu ex',              rarity:'SIR', price:505, pullPct:0.0499 },
+      { name:"Team Rocket's Mewtwo ex", rarity:'SIR', price:250, pullPct:0.0499 },
+      { name:'Mega Dragonite ex',       rarity:'MAR', price:60,  pullPct:0.4329 },
+      { name:'Canari ex',               rarity:'UR',  price:30,  pullPct:0.4202 },
+      { name:'Psyduck',                 rarity:'IR',  price:100, pullPct:0.3788 },
     ],
   },
 
-  // ── Journey Together ───────────────────────────────────────
   {
     id: 'sv9',
     name: 'Journey Together',
@@ -67,6 +63,7 @@ const SETS = [
     released: '2025-03-28',
     cardCount: 190,
     packEV: 3.07,
+    packResalePrice: 6.75,
     pricesUpdated: 'March 8, 2026',
     accentColor: '#22d3ee',
     topCard: { name: "Lillie's Clefairy ex SIR", price: 122 },
@@ -81,13 +78,12 @@ const SETS = [
       { key:'C',   pullPct:4.695,  avgPrice:0.13,  ev:0.53, count:85 },
     ],
     notable: [
-      { name:"Lillie's Clefairy ex",  rarity:'SIR', price:122, pullPct:0.1934 },
-      { name:'Salamence ex',          rarity:'SIR', price:54,  pullPct:0.1934 },
-      { name:"N's Zoroark ex",        rarity:'SIR', price:51,  pullPct:0.1934 },
+      { name:"Lillie's Clefairy ex", rarity:'SIR', price:122, pullPct:0.1934 },
+      { name:'Salamence ex',         rarity:'SIR', price:54,  pullPct:0.1934 },
+      { name:"N's Zoroark ex",       rarity:'SIR', price:51,  pullPct:0.1934 },
     ],
   },
 
-  // ── Prismatic Evolutions ───────────────────────────────────
   {
     id: 'sv8pt5',
     name: 'Prismatic Evolutions',
@@ -95,6 +91,7 @@ const SETS = [
     released: '2025-01-17',
     cardCount: 180,
     packEV: 4.56,
+    packResalePrice: 24.00,
     pricesUpdated: 'March 9, 2026',
     accentColor: '#a78bfa',
     topCard: { name: 'Umbreon ex SIR', price: 1121 },
@@ -109,13 +106,12 @@ const SETS = [
       { key:'C',   pullPct:8.696,  avgPrice:0.09,   ev:0.38, count:46 },
     ],
     notable: [
-      { name:'Umbreon ex',   rarity:'SIR', price:1121, pullPct:0.0694 },
-      { name:'Sylveon ex',   rarity:'SIR', price:301,  pullPct:0.0694 },
-      { name:'Leafeon ex',   rarity:'SIR', price:245,  pullPct:0.0694 },
+      { name:'Umbreon ex', rarity:'SIR', price:1121, pullPct:0.0694 },
+      { name:'Sylveon ex', rarity:'SIR', price:301,  pullPct:0.0694 },
+      { name:'Leafeon ex', rarity:'SIR', price:245,  pullPct:0.0694 },
     ],
   },
 
-  // ── Surging Sparks ─────────────────────────────────────────
   {
     id: 'sv8',
     name: 'Surging Sparks',
@@ -123,6 +119,7 @@ const SETS = [
     released: '2024-11-08',
     cardCount: 252,
     packEV: 3.08,
+    packResalePrice: 7.00,
     pricesUpdated: 'March 9, 2026',
     accentColor: '#f59e0b',
     topCard: { name: 'Pikachu ex SIR', price: 256 },
@@ -138,13 +135,12 @@ const SETS = [
       { key:'C',   pullPct:4.545,  avgPrice:0.11,  ev:0.43, count:88 },
     ],
     notable: [
-      { name:'Pikachu ex',  rarity:'SIR', price:256, pullPct:0.1046 },
-      { name:'Latias ex',   rarity:'SIR', price:170, pullPct:0.1046 },
-      { name:'Milotic ex',  rarity:'SIR', price:95,  pullPct:0.1046 },
+      { name:'Pikachu ex', rarity:'SIR', price:256, pullPct:0.1046 },
+      { name:'Latias ex',  rarity:'SIR', price:170, pullPct:0.1046 },
+      { name:'Milotic ex', rarity:'SIR', price:95,  pullPct:0.1046 },
     ],
   },
 
-  // ── Stellar Crown ──────────────────────────────────────────
   {
     id: 'sv7',
     name: 'Stellar Crown',
@@ -152,6 +148,7 @@ const SETS = [
     released: '2024-09-13',
     cardCount: 175,
     packEV: 3.19,
+    packResalePrice: 5.50,
     pricesUpdated: 'March 9, 2026',
     accentColor: '#3b82f6',
     topCard: { name: 'Squirtle IR', price: 90 },
@@ -167,13 +164,12 @@ const SETS = [
       { key:'C',   pullPct:5.618,  avgPrice:0.10,  ev:0.40, count:71 },
     ],
     notable: [
-      { name:'Squirtle',     rarity:'IR',  price:90,  pullPct:0.5988 },
-      { name:'Bulbasaur',    rarity:'IR',  price:78,  pullPct:0.5988 },
-      { name:'Dachsbun ex',  rarity:'SIR', price:37,  pullPct:0.1848 },
+      { name:'Squirtle',    rarity:'IR',  price:90, pullPct:0.5988 },
+      { name:'Bulbasaur',   rarity:'IR',  price:78, pullPct:0.5988 },
+      { name:'Dachsbun ex', rarity:'SIR', price:37, pullPct:0.1848 },
     ],
   },
 
-  // ── Shrouded Fable ─────────────────────────────────────────
   {
     id: 'sv6pt5',
     name: 'Shrouded Fable',
@@ -181,6 +177,7 @@ const SETS = [
     released: '2024-08-02',
     cardCount: 99,
     packEV: 4.09,
+    packResalePrice: 7.50,
     pricesUpdated: 'February 26, 2026',
     accentColor: '#10b981',
     topCard: { name: 'Fezandipiti ex SIR', price: 46 },
@@ -191,18 +188,17 @@ const SETS = [
       { key:'IR',  pullPct:0.5136, avgPrice:21.81, ev:1.68, count:15 },
       { key:'ACE', pullPct:1.667,  avgPrice:0.59,  ev:0.03, count:3  },
       { key:'DR',  pullPct:2.778,  avgPrice:1.95,  ev:0.32, count:6  },
-      { key:'R',   pullPct:10.87,  avgPrice:0.14, ev:0.11, count:7  },
+      { key:'R',   pullPct:10.87,  avgPrice:0.14,  ev:0.11, count:7  },
       { key:'U',   pullPct:14.93,  avgPrice:0.12,  ev:0.36, count:20 },
       { key:'C',   pullPct:14.29,  avgPrice:0.09,  ev:0.36, count:28 },
     ],
     notable: [
-      { name:'Fezandipiti ex',     rarity:'SIR', price:46, pullPct:0.2292 },
-      { name:'Duskull',            rarity:'IR',  price:45, pullPct:0.5136 },
-      { name:'Basic Dark Energy',  rarity:'HR',  price:44, pullPct:0.1558 },
+      { name:'Fezandipiti ex',    rarity:'SIR', price:46, pullPct:0.2292 },
+      { name:'Duskull',           rarity:'IR',  price:45, pullPct:0.5136 },
+      { name:'Basic Dark Energy', rarity:'HR',  price:44, pullPct:0.1558 },
     ],
   },
 
-  // ── Twilight Masquerade ────────────────────────────────────
   {
     id: 'sv6',
     name: 'Twilight Masquerade',
@@ -210,6 +206,7 @@ const SETS = [
     released: '2024-05-24',
     cardCount: 226,
     packEV: 3.01,
+    packResalePrice: 5.75,
     pricesUpdated: 'February 7, 2026',
     accentColor: '#ec4899',
     topCard: { name: 'Greninja ex SIR', price: 280 },
@@ -225,13 +222,12 @@ const SETS = [
       { key:'C',   pullPct:5.263,  avgPrice:0.09,  ev:0.34, count:76 },
     ],
     notable: [
-      { name:'Greninja ex',  rarity:'SIR', price:280, pullPct:0.1064 },
-      { name:'Perrin',       rarity:'SIR', price:96,  pullPct:0.1064 },
-      { name:'Eevee',        rarity:'IR',  price:59,  pullPct:0.3679 },
+      { name:'Greninja ex', rarity:'SIR', price:280, pullPct:0.1064 },
+      { name:'Perrin',      rarity:'SIR', price:96,  pullPct:0.1064 },
+      { name:'Eevee',       rarity:'IR',  price:59,  pullPct:0.3679 },
     ],
   },
 
-  // ── Paradox Rift ───────────────────────────────────────────
   {
     id: 'sv4',
     name: 'Paradox Rift',
@@ -239,6 +235,7 @@ const SETS = [
     released: '2023-11-03',
     cardCount: 266,
     packEV: 2.90,
+    packResalePrice: 5.25,
     pricesUpdated: 'February 11, 2026',
     accentColor: '#f97316',
     topCard: { name: 'Groudon IR', price: 73 },
@@ -259,7 +256,6 @@ const SETS = [
     ],
   },
 
-  // ── Pokémon 151 ────────────────────────────────────────────
   {
     id: 'sv3pt5',
     name: 'Pokémon 151',
@@ -267,6 +263,7 @@ const SETS = [
     released: '2023-09-22',
     cardCount: 207,
     packEV: 4.50,
+    packResalePrice: 24.17,
     pricesUpdated: 'December 2025',
     accentColor: '#84cc16',
     topCard: { name: 'Charizard ex SIR', price: 239 },
@@ -287,7 +284,6 @@ const SETS = [
     ],
   },
 
-  // ── Obsidian Flames ────────────────────────────────────────
   {
     id: 'sv3',
     name: 'Obsidian Flames',
@@ -295,6 +291,7 @@ const SETS = [
     released: '2023-08-11',
     cardCount: 230,
     packEV: 2.98,
+    packResalePrice: 5.00,
     pricesUpdated: 'February 9, 2026',
     accentColor: '#ef4444',
     topCard: { name: 'Charizard ex SIR', price: 73 },
@@ -309,15 +306,14 @@ const SETS = [
       { key:'C',   pullPct:4.348,  avgPrice:0.09,  ev:0.37, count:92 },
     ],
     notable: [
-      { name:'Charizard ex (SIR)',   rarity:'SIR', price:73, pullPct:0.5215 },
-      { name:'Charizard ex (Gold)',  rarity:'HR',  price:35, pullPct:0.6410 },
-      { name:'Ninetales',            rarity:'IR',  price:24, pullPct:0.6329 },
+      { name:'Charizard ex (SIR)',  rarity:'SIR', price:73, pullPct:0.5215 },
+      { name:'Charizard ex (Gold)', rarity:'HR',  price:35, pullPct:0.6410 },
+      { name:'Ninetales',           rarity:'IR',  price:24, pullPct:0.6329 },
     ],
   },
 
 ];
 
-// Build a flat card search index across all sets
 function buildSearchIndex() {
   const idx = [];
   SETS.forEach(set => {
@@ -330,7 +326,6 @@ function buildSearchIndex() {
 
 const CARD_INDEX = buildSearchIndex();
 
-// Utility
 function priceFmt(p) {
   if (p >= 1000) return '$' + Math.round(p).toLocaleString();
   if (p >= 100)  return '$' + Math.round(p);
