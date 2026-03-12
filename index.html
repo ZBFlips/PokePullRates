@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PullRates.gg — Pokémon TCG Pack Odds</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <script src="data.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: #06060f;
+      color: #fff;
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+    }
+    a { color: inherit; text-decoration: none; }
+    ::-webkit-scrollbar { width: 5px; background: #111; }
+    ::-webkit-scrollbar-thumb { background: #2a2a3a; border-radius: 3px; }
+
+    /* ── NAV ── */
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px; height: 58px;
+      background: rgba(6,6,15,.95);
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      position: sticky; top: 0; z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+    .nav-logo {
+      font-size: 17px; font-weight: 800; letter-spacing: -.02em;
+      background: linear-gradient(90deg,#a78bfa,#67e8f9);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .nav-sub {
+      font-family: 'Space Mono', monospace; font-size: 9px;
+      color: #4b5563; letter-spacing: .15em; text-transform: uppercase;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      text-align: center; padding: 64px 24px 48px;
+      background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(124,58,237,.12) 0%, transparent 70%);
+    }
+    .hero-eyebrow {
+      font-family: 'Space Mono', monospace; font-size: 10px;
+      letter-spacing: .35em; color: #6366f1; text-transform: uppercase;
+      font-weight: 700; margin-bottom: 12px;
+    }
+    .hero h1 {
+      font-size: clamp(26px, 5vw, 52px); font-weight: 800; line-height: 1.08;
+      letter-spacing: -.03em; margin-bottom: 14px;
+      background: linear-gradient(135deg, #e2e8f0 0%, #a78bfa 40%, #67e8f9 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      font-size: 14px; color: #6b7280; max-width: 520px; margin: 0 auto 32px;
+      line-height: 1.7; font-family: 'Space Mono', monospace;
+    }
+
+    /* ── SEARCH ── */
+    .search-wrap {
+      max-width: 560px; margin: 0 auto 48px; position: relative;
+    }
+    .search-icon {
+      position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+      color: #4b5563; pointer-events: none; font-size: 16px;
+    }
+    #search {
+      width: 100%; padding: 14px 48px 14px 44px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 12px; color: #fff;
+      font-family: 'Syne', sans-serif; font-size: 14px;
+      outline: none; transition: border-color .2s, box-shadow .2s;
+    }
+    #search::placeholder { color: #4b5563; }
+    #search:focus {
+      border-color: rgba(124,58,237,.6);
+      box-shadow: 0 0 0 3px rgba(124,58,237,.15);
+    }
+    #search-clear {
+      position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; color: #4b5563; cursor: pointer;
+      font-size: 18px; line-height: 1; padding: 4px; display: none;
+    }
+    #search-clear:hover { color: #9ca3af; }
+
+    /* ── CARD RESULTS (search) ── */
+    #card-results {
+      max-width: 560px; margin: -36px auto 40px;
+      background: rgba(10,10,26,.98);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 10px; overflow: hidden; display: none;
+    }
+    .card-result-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 16px; border-bottom: 1px solid rgba(255,255,255,.05);
+      cursor: pointer; transition: background .1s;
+    }
+    .card-result-item:last-child { border-bottom: none; }
+    .card-result-item:hover { background: rgba(255,255,255,.04); }
+    .cr-name { font-size: 13px; font-weight: 600; color: #e2e8f0; }
+    .cr-set  { font-family: 'Space Mono', monospace; font-size: 9.5px; color: #4b5563; margin-top: 2px; }
+    .cr-right { text-align: right; flex-shrink: 0; margin-left: 12px; }
+    .cr-price { font-size: 14px; font-weight: 700; }
+    .cr-pull  { font-family: 'Space Mono', monospace; font-size: 9px; color: #4b5563; margin-top: 1px; }
+
+    /* ── SECTION ── */
+    .section { max-width: 1280px; margin: 0 auto; padding: 0 24px 64px; }
+    .section-title {
+      font-size: 11px; font-weight: 700; letter-spacing: .22em;
+      color: #4b5563; text-transform: uppercase;
+      font-family: 'Space Mono', monospace; margin-bottom: 20px;
+    }
+    .result-count {
+      font-family: 'Space Mono', monospace; font-size: 9.5px;
+      color: #374151; margin-left: 10px;
+    }
+
+    /* ── SET GRID ── */
+    #set-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .set-card {
+      background: rgba(255,255,255,.025);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 14px; overflow: hidden;
+      transition: transform .18s, box-shadow .18s, border-color .18s;
+      cursor: pointer; display: block;
+    }
+    .set-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(0,0,0,.5);
+    }
+    .set-card-top {
+      height: 90px; position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .set-card-badge {
+      font-family: 'Space Mono', monospace; font-size: 28px;
+      font-weight: 700; letter-spacing: -.04em; opacity: .18;
+      color: #fff; user-select: none;
+    }
+    .set-card-series {
+      position: absolute; top: 10px; left: 12px;
+      font-family: 'Space Mono', monospace; font-size: 8.5px;
+      font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+      background: rgba(0,0,0,.45); padding: 3px 7px; border-radius: 4px;
+      color: rgba(255,255,255,.55);
+    }
+    .set-card-body { padding: 14px 16px 16px; }
+    .set-card-name {
+      font-size: 16px; font-weight: 800; color: #f1f5f9;
+      margin-bottom: 4px; line-height: 1.2;
+    }
+    .set-card-released {
+      font-family: 'Space Mono', monospace; font-size: 9px;
+      color: #374151; margin-bottom: 12px;
+    }
+    .set-card-stats {
+      display: flex; gap: 0; margin-bottom: 12px;
+    }
+    .stat {
+      flex: 1; border-right: 1px solid rgba(255,255,255,.06);
+      padding-right: 10px; margin-right: 10px;
+    }
+    .stat:last-child { border-right: none; padding-right: 0; margin-right: 0; }
+    .stat-label {
+      font-family: 'Space Mono', monospace; font-size: 8.5px;
+      color: #374151; text-transform: uppercase; letter-spacing: .1em;
+      margin-bottom: 3px;
+    }
+    .stat-val { font-size: 16px; font-weight: 800; color: #e2e8f0; line-height: 1; }
+    .set-card-chase {
+      background: rgba(255,255,255,.04);
+      border-radius: 8px; padding: 8px 10px;
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 12px;
+    }
+    .chase-name {
+      font-size: 11px; font-weight: 600; color: #9ca3af;
+      max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .chase-price { font-size: 15px; font-weight: 800; }
+    .set-card-btn {
+      width: 100%; padding: 10px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 8px; color: #e2e8f0;
+      font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
+      cursor: pointer; transition: background .15s, border-color .15s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .set-card-btn:hover { background: rgba(255,255,255,.1); }
+
+    /* ── EMPTY STATE ── */
+    #empty-state {
+      text-align: center; padding: 60px 24px; display: none;
+    }
+    #empty-state p { color: #374151; font-family: 'Space Mono', monospace; font-size: 12px; }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center; padding: 32px 24px;
+      border-top: 1px solid rgba(255,255,255,.05);
+      font-family: 'Space Mono', monospace; font-size: 9.5px;
+      color: #1f2937; line-height: 2;
+    }
+    footer a { color: #374151; }
+    footer a:hover { color: #6b7280; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .hero { padding: 40px 16px 32px; }
+      .section { padding: 0 16px 48px; }
+      #set-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(16px); }
+      to   { opacity:1; transform:none; }
+    }
+    .set-card { animation: fadeUp .4s ease both; }
+    .hero      { animation: fadeUp .3s ease both; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div>
+    <div class="nav-logo">PullRates.gg</div>
+    <div class="nav-sub">Pokémon TCG Pack Odds</div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">Data-driven · Community sourced · Free to use</div>
+  <h1>What's Actually<br/>Inside That Pack?</h1>
+  <p>Transparent pull rates and market prices for every rarity in every set.<br/>No hype — just the real odds.</p>
+
+  <!-- SEARCH -->
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input type="text" id="search" placeholder="Search sets or cards… e.g. Charizard, Umbreon, Surging Sparks"/>
+    <button id="search-clear" title="Clear search">×</button>
+  </div>
+  <div id="card-results"></div>
+</section>
+
+<!-- SETS -->
+<section class="section">
+  <div style="display:flex;align-items:center;margin-bottom:20px;">
+    <span class="section-title" style="margin-bottom:0;">Browse Sets</span>
+    <span class="result-count" id="result-count"></span>
+  </div>
+  <div id="set-grid"></div>
+  <div id="empty-state"><p>No sets or cards found matching your search.</p></div>
+</section>
+
+<footer>
+  PullRates.gg · Data sourced from ThePriceDex, TCGPlayer, and community pack openings<br/>
+  Prices reflect TCGPlayer NM ungraded market averages · Not affiliated with Nintendo, Game Freak, or Creatures Inc.<br/>
+  <a href="https://www.thepricedex.com">ThePriceDex</a> &nbsp;·&nbsp;
+  <a href="https://www.tcgplayer.com">TCGPlayer</a>
+</footer>
+
+<script>
+  // ── Render set cards ───────────────────────────────────────
+  function setCardHTML(set, animDelay) {
+    const gradStart = set.accentColor + '33';
+    const gradEnd   = set.accentColor + '11';
+    const code      = set.id.toUpperCase().replace(/PT5/,'').replace(/SV/,'SV');
+    return `
+      <a class="set-card" href="set.html?id=${set.id}"
+         style="border-top:3px solid ${set.accentColor}40; animation-delay:${animDelay}ms;"
+         data-name="${set.name.toLowerCase()}" data-series="${set.series.toLowerCase()}">
+        <div class="set-card-top" style="background:linear-gradient(135deg,${gradStart},${gradEnd});">
+          <div class="set-card-badge">${set.id.replace('pt5','').replace('sv','').toUpperCase() || set.id}</div>
+          <div class="set-card-series">${set.series}</div>
+        </div>
+        <div class="set-card-body">
+          <div class="set-card-name">${set.name}</div>
+          <div class="set-card-released">${formatDate(set.released)} · ${set.cardCount} cards</div>
+          <div class="set-card-stats">
+            <div class="stat">
+              <div class="stat-label">Pack EV</div>
+              <div class="stat-val" style="color:${set.accentColor}">$${set.packEV.toFixed(2)}</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Top Chase</div>
+              <div class="stat-val" style="color:${set.accentColor}">${priceFmt(set.topCard.price)}</div>
+            </div>
+          </div>
+          <div class="set-card-chase">
+            <div class="chase-name">${set.topCard.name}</div>
+            <div class="chase-price" style="color:${set.accentColor}">${priceFmt(set.topCard.price)}</div>
+          </div>
+          <button class="set-card-btn" style="border-color:${set.accentColor}30; color:${set.accentColor};">
+            View Pull Rates →
+          </button>
+        </div>
+      </a>`;
+  }
+
+  function formatDate(d) {
+    const dt = new Date(d);
+    return dt.toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
+  }
+
+  function renderGrid(filteredSets) {
+    const grid  = document.getElementById('set-grid');
+    const empty = document.getElementById('empty-state');
+    const count = document.getElementById('result-count');
+
+    grid.innerHTML = filteredSets.map((s,i) => setCardHTML(s, i * 40)).join('');
+    empty.style.display = filteredSets.length === 0 ? 'block' : 'none';
+    count.textContent   = filteredSets.length === SETS.length
+      ? `${SETS.length} sets`
+      : `${filteredSets.length} of ${SETS.length} sets`;
+  }
+
+  // ── Search ─────────────────────────────────────────────────
+  const input     = document.getElementById('search');
+  const clearBtn  = document.getElementById('search-clear');
+  const cardBox   = document.getElementById('card-results');
+
+  input.addEventListener('input', () => {
+    const q = input.value.trim().toLowerCase();
+    clearBtn.style.display = q ? 'block' : 'none';
+
+    if (!q) {
+      renderGrid(SETS);
+      cardBox.style.display = 'none';
+      return;
+    }
+
+    // Filter sets
+    const matchSets = SETS.filter(s =>
+      s.name.toLowerCase().includes(q) ||
+      s.series.toLowerCase().includes(q) ||
+      s.id.toLowerCase().includes(q)
+    );
+
+    // Filter cards
+    const matchCards = CARD_INDEX.filter(c =>
+      c.name.toLowerCase().includes(q) ||
+      c.setName.toLowerCase().includes(q) ||
+      RARITY_LABELS[c.rarity]?.toLowerCase().includes(q)
+    ).slice(0, 8);
+
+    renderGrid(matchSets);
+
+    if (matchCards.length > 0) {
+      cardBox.style.display = 'block';
+      cardBox.innerHTML = matchCards.map(c => {
+        const col = RARITY_COLORS[c.rarity] || '#fff';
+        return `
+          <div class="card-result-item" onclick="location.href='set.html?id=${c.setId}'">
+            <div>
+              <div class="cr-name">${c.name}</div>
+              <div class="cr-set">${c.setName} · <span style="color:${col}">${RARITY_LABELS[c.rarity] || c.rarity}</span></div>
+            </div>
+            <div class="cr-right">
+              <div class="cr-price" style="color:${col}">${priceFmt(c.price)}</div>
+              <div class="cr-pull">${pullFmt(c.pullPct)}</div>
+            </div>
+          </div>`;
+      }).join('');
+    } else {
+      cardBox.style.display = 'none';
+    }
+  });
+
+  clearBtn.addEventListener('click', () => {
+    input.value = '';
+    clearBtn.style.display = 'none';
+    cardBox.style.display  = 'none';
+    renderGrid(SETS);
+    input.focus();
+  });
+
+  // Close card results when clicking outside
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.search-wrap') && !e.target.closest('#card-results')) {
+      cardBox.style.display = 'none';
+    }
+  });
+
+  // ── Init ───────────────────────────────────────────────────
+  renderGrid(SETS);
+  document.getElementById('result-count').textContent = `${SETS.length} sets`;
+</script>
+</body>
+</html>
