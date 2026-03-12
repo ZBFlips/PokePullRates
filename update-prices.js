@@ -1,59 +1,51 @@
 const fs = require('fs');
-const fetch = require('node-fetch');
+const fetch = require('node-fetch'); // Ensure you have package.json (see below)
 
-// 1. Get your free API Key at https://pokemontcg.io/
-const API_KEY = 'YOUR_API_KEY_HERE'; 
-const DATA_PATH = './data.js';
+// You can use the API without a key, but it's slower. 
+// Get a free key at pokemontcg.io for 1000+ requests/day.
+const API_KEY = process.env.POKEMON_TCG_API_KEY || ''; 
 
-async function fetchPrice(cardId) {
+const DATA_FILE = './data.js';
+
+async function getPrice(cardId) {
     try {
         const url = `https://api.pokemontcg.io/v2/cards/${cardId}`;
-        const res = await fetch(url, { headers: { 'X-Api-Key': API_KEY } });
-        const json = await res.json();
+        const headers = API_KEY ? { 'X-Api-Key': API_KEY } : {};
+        const response = await fetch(url, { headers });
+        const json = await response.json();
         
-        if (!json.data || !json.data.tcgplayer) return null;
-        
-        // Prioritize Holofoil market price, fallback to Normal
-        const prices = json.data.tcgplayer.prices;
-        return prices.holofoil?.market || prices.normal?.market || prices.unlimitedHolofoil?.market;
+        // Target the TCGPlayer Market Price (Standard for 'Real Time' tracking)
+        const p = json.data.tcgplayer.prices;
+        return p.holofoil?.market || p.normal?.market || p.unlimitedHolofoil?.market || 0;
     } catch (e) {
-        console.error(`Failed to fetch ${cardId}:`, e.message);
         return null;
     }
 }
 
-async function run() {
-    console.log("Reading data.js...");
-    let fileContent = fs.readFileSync(DATA_PATH, 'utf8');
-
-    // Extract the JSON portion from the JS file
-    const startIdx = fileContent.indexOf('[');
-    const endIdx = fileContent.lastIndexOf(']') + 1;
-    let sets = JSON.parse(fileContent.substring(startIdx, endIdx));
+async function start() {
+    let content = fs.readFileSync(DATA_FILE, 'utf8');
+    
+    // We isolate the SETS array from your data.js
+    const startIdx = content.indexOf('[');
+    const endIdx = content.lastIndexOf(']') + 1;
+    let sets = JSON.parse(content.substring(startIdx, endIdx));
 
     for (let set of sets) {
-        console.log(`\nUpdating ${set.name}...`);
+        console.log(`Updating ${set.name}...`);
         for (let card of set.notable) {
             if (card.cardId) {
-                const newPrice = await fetchPrice(card.cardId);
-                if (newPrice) {
-                    console.log(`  - ${card.name}: $${card.price} -> $${newPrice.toFixed(2)}`);
-                    card.price = newPrice;
-                }
+                const newPrice = await getPrice(card.cardId);
+                if (newPrice) card.price = newPrice;
             }
         }
-        // Update the metadata
-        set.pricesUpdated = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-        set.topCard.price = Math.max(...set.notable.map(c => c.price));
+        // Metadata updates
+        set.pricesUpdated = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
     }
 
     // Reconstruct the data.js file
-    const newContent = fileContent.substring(0, startIdx) + 
-                       JSON.stringify(sets, null, 2) + 
-                       fileContent.substring(endIdx);
-
-    fs.writeFileSync(DATA_PATH, newContent);
-    console.log("\nSuccess! data.js has been updated.");
+    const newContent = content.substring(0, startIdx) + JSON.stringify(sets, null, 2) + content.substring(endIdx);
+    fs.writeFileSync(DATA_FILE, newContent);
+    console.log("Prices updated successfully.");
 }
 
-run();
+start();
